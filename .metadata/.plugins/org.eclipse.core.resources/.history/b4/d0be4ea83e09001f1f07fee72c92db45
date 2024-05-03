@@ -1,0 +1,155 @@
+package Ejercicio1;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * Clase que representa variables compartidas entre hilos.
+ */
+class VariablesCompartidas {
+    private int bufferElem[];
+    private int bufferSuma[];
+    private boolean bufferCalculado[];
+    private boolean elementosGenerados = false;
+    private ReentrantLock l = new ReentrantLock();
+
+    /**
+     * Constructor de la clase VariablesCompartidas.
+     * @param buffer1 Arreglo para almacenar elementos.
+     * @param buffer2 Arreglo para almacenar resultados de sumas.
+     * @param buffer3 Arreglo de booleanos para indicar si se ha calculado el resultado.
+     */
+    public VariablesCompartidas(int buffer1[], int buffer2[], boolean buffer3[]) {
+        this.bufferElem = buffer1;
+        this.bufferSuma = buffer2;
+        this.bufferCalculado = buffer3;
+    }
+
+    /**
+     * Método para generar elementos en el buffer.
+     */
+    public void productor() {
+        l.lock();
+        try {
+            for (int i = 0; i < 10; i++) {
+                // dividimos el array en 10 mini-arrays, de manera que si el numero del
+                // mini-array es par, se ponen numeros de operacion en las posiciones impares,
+                // y si el numero es impar, en las posiciones pares
+                for (int j = 10 * i + i; j < (10 * i + i) + 11; j++) {
+                    if (i % 2 == 0) {
+                        if (j % 2 == 0) {
+                            // si el miniarray es par, y la pos es par se ha de poner un numero
+                            bufferElem[j] = ((int) Math.round(Math.random() * 10));
+                        } else {
+                            // si el miniarray es par, y la pos es impar se ha de poner un numero de
+                            // operacion
+                            // 1 suma
+                            // 2 resta
+                            // 3 producto
+                            bufferElem[j] = ((int) Math.round(Math.random() * 2)) + 1;
+                        }
+                    } else {
+                        if (j % 2 == 0) {
+                            // si el miniarray es impar, y la pos es par se ha de poner un numero de
+                            // operacion
+                            bufferElem[j] = ((int) Math.round(Math.random() * 2)) + 1;
+                        } else {
+                            // si el miniarray es impar, y la pos es impar se ha de poner un numero
+                            bufferElem[j] = ((int) Math.round(Math.random() * 10));
+                        }
+                    }
+                }
+            }
+            elementosGenerados = true;
+        } finally {
+            l.unlock();
+        }
+    }
+
+    /**
+     * Método para consumir elementos del buffer y realizar sumas.
+     */
+    public void consumidor() {
+        l.lock();
+        try {
+            if (!elementosGenerados) {
+                return; // Si no se han generado elementos, no hay nada que consumir
+            }
+
+            // Buscamos el primer mini-array que no haya sido calculado
+            int i = 0;
+            while (i < 10 && bufferCalculado[i]) {
+                i++;
+            }
+
+            if (i >= 10) {
+                return; // Todos los mini-arrays ya han sido calculados
+            }
+
+            bufferCalculado[i] = true;
+
+            int n1Prin = bufferElem[(i * 10) + i];
+            int opPrin = bufferElem[((i * 10) + i) + 1];
+            int n2Prin = bufferElem[((i * 10) + i) + 2];
+
+            int total = realizarOperacion(n1Prin, opPrin, n2Prin);
+
+            // Recorremos el mini-array para realizar las operaciones
+            for (int j = ((i * 10) + i) + 3; j < ((i * 10) + i) + 11; j = j + 3) {
+                int op = bufferElem[j];
+                int n3 = bufferElem[j + 1];
+                total = realizarOperacion(total, op, n3);
+            }
+
+            // Guardamos el resultado en el buffer de sumas
+            bufferSuma[i] = total;
+            System.out.println("Hilo consumidor " + (i + 1) + ": " + bufferSuma[i]);
+        } finally {
+            l.unlock();
+        }
+    }
+
+    /**
+     * Método para sumar los resultados almacenados en el buffer.
+     */
+    public void sumador() {
+        l.lock();
+        try {
+            if (!elementosGenerados) {
+                return; // No se han generado elementos, no hay nada que sumar
+            }
+
+            // Comprobamos que todas las secciones han sido calculadas
+            for (int i = 0; i < 10; i++) {
+                if (!bufferCalculado[i]) {
+                    return; // Todavía hay secciones no calculadas, no podemos realizar la suma
+                }
+            }
+
+            // Si todas las secciones han sido calculadas, realizamos la suma
+            int total = 0;
+            for (int i = 0; i < 10; i++) {
+                total += bufferSuma[i];
+            }
+
+            System.out.println("------------------");
+            System.out.println("Total: " + total);
+        } finally {
+            l.unlock();
+        }
+    }
+
+    /**
+     * Método para realizar una operación dada dos operandos y un operador.
+     */
+    private int realizarOperacion(int a, int operador, int b) {
+        switch (operador) {
+            case 1: // suma
+                return a + b;
+            case 2: // resta
+                return a - b;
+            case 3: // producto
+                return a * b;
+            
+        }
+    }
+}

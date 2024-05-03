@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="ExternalProjectImportWizard">
+		<item key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED" value="true"/>
+		<item key="WizardProjectsImportPage.STORE_CLOSE_CREATED_PROJECTS_ID" value="false"/>
+		<item key="WizardProjectsImportPage.STORE_HIDE_CONFLICTING_PROJECTS_ID" value="false"/>
+		<item key="WizardProjectsImportPage.STORE_NESTED_PROJECTS" value="false"/>
+		<item key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID" value="false"/>
+		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="C:\Users\pepeg\Downloads\PCD-03-05"/>
+			<item value="C:\Users\pepeg\eclipse-workspacePCD\PCD-03-05"/>
+			<item value="C:\Users\pepeg\Downloads\PCD-03-05\PCD-03-05"/>
+			<item value=""/>
+		</list>
+		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
+			<item value="C:\Users\pepeg\Downloads\PCD-03-05.zip"/>
+			<item value=""/>
+			<item value="C:\Users\pepeg\Downloads\PCD-29-04.zip"/>
+		</list>
+	</section>
+</section>

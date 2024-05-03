@@ -1,0 +1,100 @@
+package Ejercicio4;
+
+import messagepassing.MailBox;
+
+
+public class Persona extends Thread {
+	private String id;
+	private MailBox buzonEnvio;
+	private MailBox buzonRespuesta;
+
+	public Persona(String id, MailBox envio,MailBox respuesta) {
+		this.id = id;
+		this.buzonEnvio = envio;
+		this.buzonRespuesta = respuesta;
+
+	}
+
+	public String getPersonaId() {
+		return id;
+	}
+
+
+	public void run() {
+
+		for (int i = 0; i < 5; i++) {
+			
+			/*System.out.println("Persona: "+ id + "\n" +
+							   "CajaAOcupada = " + Programa.ocupadaCajaA + "\n" +
+							   "CajaBOcupada = " + Programa.ocupadaCajaB + "\n" +
+							   "Imprimir = " + Programa.ocupadaPantalla + "\n"
+					);
+			*/
+			buzonEnvio.send(Programa.PEDIR);
+			/*long tiempoCompra = (long) (Math.random()*9000 +1000);
+			try {
+				
+				Thread.sleep(tiempoCompra);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+*/
+
+			String respuesta = (String) buzonRespuesta.receive();
+			String devolucionTiempoYCaja = (String) respuesta;
+			String[] respuestaTiempoYCaja = devolucionTiempoYCaja.split(":");
+			String caja = respuestaTiempoYCaja[0];
+			String tiempoCajaST = respuestaTiempoYCaja[1];
+			long tiempoCaja = Long.valueOf(tiempoCajaST);
+
+			if(caja.equals("A")) {
+				buzonEnvio.send(Programa.ACCEDER_A);
+				String devolucionConfirmacionCaja = (String) buzonRespuesta.receive();
+				while(!devolucionConfirmacionCaja.equals(Programa.CONFIRMACION_A) ) {
+					buzonEnvio.send(Programa.ACCEDER_A);
+					devolucionConfirmacionCaja = (String) buzonRespuesta.receive();
+				}
+
+
+			} else if(caja.equals("B")){
+				buzonEnvio.send(Programa.ACCEDER_B);
+				String devolucionConfirmacionCaja = (String) buzonRespuesta.receive();
+				while(!devolucionConfirmacionCaja.equals(Programa.CONFIRMACION_B) ) {
+					buzonEnvio.send(Programa.ACCEDER_B);
+					devolucionConfirmacionCaja = (String) buzonRespuesta.receive();
+				}
+
+			}
+
+
+			try {
+				Thread.sleep(tiempoCaja);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+
+			buzonEnvio.send(Programa.LIBERAR + ":" + caja );
+
+
+
+			buzonEnvio.send(Programa.IMPRIMIR);
+			String devolucionConfirmacionImprimir = (String) buzonRespuesta.receive();
+			while(!devolucionConfirmacionImprimir.equals(Programa.IMPRIMIR_OK)) {
+				buzonEnvio.send(Programa.IMPRIMIR);
+				devolucionConfirmacionImprimir = (String) buzonRespuesta.receive();
+			}
+			
+			System.out.println("--------------------");
+            System.out.println("Persona " + this.id + " ha usado la caja "+ caja);
+            System.out.println("Tiempo de pago = " + tiempoCaja);
+            System.out.println("Thread.sleep("+ tiempoCaja+")");
+            System.out.println("Persona " + this.id   + " liberando la caja " +  caja);
+            System.out.println("--------------------");
+			
+            buzonEnvio.send(Programa.IMPRIMIR_FIN);
+
+		}
+	}
+
+}

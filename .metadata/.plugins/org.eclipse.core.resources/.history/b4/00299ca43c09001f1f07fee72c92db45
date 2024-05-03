@@ -1,0 +1,66 @@
+package Ejercicio1;
+
+/**
+ * Clase que representa el programa principal.
+ */
+public class Programa {
+
+    static VariablesCompartidas compar = new VariablesCompartidas(new int[110], new int[10], new boolean[10]);
+
+    /**
+     * Método principal que inicia la ejecución del programa.
+     */
+    public static void main(String[] args) {
+
+		HiloProductor a = new HiloProductor(compar);
+		a.start();
+		
+		HiloConsumidor b = new HiloConsumidor(compar);
+		b.start();
+		
+		HiloConsumidor c = new HiloConsumidor(compar);
+		c.start();
+		HiloConsumidor d = new HiloConsumidor(compar);
+		d.start();
+		HiloConsumidor n = new HiloConsumidor(compar);
+		n.start();
+		HiloConsumidor f = new HiloConsumidor(compar);
+		f.start();
+		HiloConsumidor g = new HiloConsumidor(compar);
+		g.start();
+		HiloConsumidor h = new HiloConsumidor(compar);
+		h.start();
+		HiloConsumidor p = new HiloConsumidor(compar);
+		p.start();
+		HiloConsumidor j = new HiloConsumidor(compar);
+		j.start();
+		HiloConsumidor k = new HiloConsumidor(compar);
+		k.start();
+		
+		
+		HiloSumador l = new  HiloSumador(compar);
+		
+		l.start();
+		
+		try {
+			a.join();
+			b.join();
+			c.join();
+			d.join();
+			n.join();
+			f.join();
+			g.join();
+			h.join();
+			p.join();
+			j.join();
+			k.join();
+			l.join();
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		
+	}
+
+}

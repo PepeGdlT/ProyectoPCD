@@ -1,0 +1,28 @@
+package Ejercicio1;
+
+import Ejercicio2.HiloPeaton;
+import Ejercicio2.HiloVehiculo;
+
+/**
+ * Clase que representa el programa principal.
+ */
+public class Programa {
+
+    static VariablesCompartidas compar = new VariablesCompartidas(new int[110], new int[10], new boolean[10]);
+
+    /**
+     * Método principal que inicia la ejecución del programa.
+     */
+    public static void main(String[] args) {
+
+        HiloConsumidor[] consumidor = new HiloConsumidor[10];
+
+        // Iniciar hilos de vehículos
+        for (int i = 0; i < 10; i++) {
+        	consumidor[i] = new HiloConsumidor(String.valueOf(i + 1));
+        	consumidor[i].start();
+        }
+		
+	}
+
+}

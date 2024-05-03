@@ -1,0 +1,55 @@
+package Ejercicio4;
+
+import messagepassing.MailBox;
+
+public class Programa {
+	public final static int NUMERO_GLOBAL = 30;
+	public static boolean ocupadaPantalla = false;
+	public static boolean ocupadaCajaA = false;
+	public static boolean ocupadaCajaB = false;
+	
+	public final static String PEDIR= "pedircaja";
+	public final static String IMPRIMIR = "imprimir";
+	public final static String IMPRIMIR_OK = "imprimirok";
+	public final static String IMPRIMIR_FIN = "imprimirfin";
+	public final static String NEGACION_PANTALLA = "imprimirNO";
+	public final static String LIBERAR = "LIBERAR";
+	public final static String ACCEDER_A = "accederA";
+	public final static String ACCEDER_B = "accederB";
+	public final static String CONFIRMACION_A = "Aok";
+	public final static String CONFIRMACION_B = "Bok";
+	public final static String NEGACION = "cajaocupada";
+
+	
+    public static void main(String[] args) {
+        MailBox[] buzonesControlador = new MailBox[NUMERO_GLOBAL];
+        MailBox[] buzonesPersonas = new MailBox[NUMERO_GLOBAL];
+        Persona[] personas = new Persona[NUMERO_GLOBAL];
+        
+      
+        
+        // Crear hilos de personas y empezarlos
+        for (int i = 0; i < NUMERO_GLOBAL; i++) {
+            buzonesPersonas[i] = new MailBox();
+            buzonesControlador[i] = new MailBox();
+            personas[i] = new Persona(String.valueOf(i+1), buzonesPersonas[i],buzonesControlador[i]);
+            personas[i].start();
+            
+        }
+
+        // Crear hilo del controlador de cajas y empezarlo
+        Thread controladorCaja = new ControladorCaja(buzonesControlador,buzonesPersonas);
+        controladorCaja.start();
+        
+        
+        try {
+        	controladorCaja.join(); 
+            for (Thread persona : personas) {
+                persona.join(); 
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+    }
+}
